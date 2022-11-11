@@ -7,7 +7,9 @@
 
 #include "core/shader.h"
 
+#include <SDL_events.h>
 #include <SDL_keycode.h>
+#include <SDL_touch.h>
 #include <spdlog/spdlog.h>
 //glm is used to create perspective and transform matrices
 #include <glm/glm.hpp>
@@ -308,11 +310,10 @@ int main(int argc, char *argv[])
 
 	bool exit = false;
 
-	// SDL_Event event;
+	SDL_Event event;
 
 	while(!exit)
 	{
-		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
 			switch(event.type)
@@ -333,6 +334,9 @@ int main(int argc, char *argv[])
 						default:
 							break;
 					}
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					spdlog::info("Touch x: {} y: {}", event.button.x, event.button.y);
 					break;
 				case SDL_QUIT:
 					exit = true;
