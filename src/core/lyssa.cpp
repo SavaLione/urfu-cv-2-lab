@@ -65,10 +65,23 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
+	// Application Variables
+	GLfloat angle_pyramid = 0.0f;
+	GLfloat angle_cube	  = 0.0f;
+
 	// Set some OpenGL settings
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glShadeModel(GL_SMOOTH);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	GLfloat aspect = (GLfloat)800 / (GLfloat)800;
+	glViewport(0, 0, 800, 800);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 
 	bool exit = false;
 
@@ -91,9 +104,114 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		glViewport(0, 0, 800, 800);
-		//glClearColor(1.f, 0.f, 1.f, 0.f);
+		// Rotate the shapes
+		angle_pyramid += 0.2f;
+		angle_cube -= 0.15f;
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glMatrixMode(GL_MODELVIEW);
+
+		// Reset the current transform
+		glLoadIdentity();
+
+		// Set the cube location
+		glTranslatef(1.5f, 0.0f, -7.0f);
+		glRotatef(angle_cube, 1.0f, 1.0f, 1.0f);
+
+		// Draw the cube
+		glBegin(GL_QUADS);
+		{
+			// Top face (y = 1.0f)
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(1.0f, 1.0f, -1.0f);
+			glVertex3f(-1.0f, 1.0f, -1.0f);
+			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glVertex3f(1.0f, 1.0f, 1.0f);
+
+			// Bottom face (y = -1.0f)
+			glColor3f(1.0f, 0.5f, 0.0f);
+			glVertex3f(1.0f, -1.0f, 1.0f);
+			glVertex3f(-1.0f, -1.0f, 1.0f);
+			glVertex3f(-1.0f, -1.0f, -1.0f);
+			glVertex3f(1.0f, -1.0f, -1.0f);
+
+			// Front face  (z = 1.0f)
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(1.0f, 1.0f, 1.0f);
+			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glVertex3f(-1.0f, -1.0f, 1.0f);
+			glVertex3f(1.0f, -1.0f, 1.0f);
+
+			// Back face (z = -1.0f)
+			glColor3f(1.0f, 1.0f, 0.0f);
+			glVertex3f(1.0f, -1.0f, -1.0f);
+			glVertex3f(-1.0f, -1.0f, -1.0f);
+			glVertex3f(-1.0f, 1.0f, -1.0f);
+			glVertex3f(1.0f, 1.0f, -1.0f);
+
+			// Left face (x = -1.0f)
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glVertex3f(-1.0f, 1.0f, -1.0f);
+			glVertex3f(-1.0f, -1.0f, -1.0f);
+			glVertex3f(-1.0f, -1.0f, 1.0f);
+
+			// Right face (x = 1.0f)
+			glColor3f(1.0f, 0.0f, 1.0f);
+			glVertex3f(1.0f, 1.0f, -1.0f);
+			glVertex3f(1.0f, 1.0f, 1.0f);
+			glVertex3f(1.0f, -1.0f, 1.0f);
+			glVertex3f(1.0f, -1.0f, -1.0f);
+		}
+		glEnd();
+
+		// Reset the current transform
+		glLoadIdentity();
+
+		// Set the pyramid location
+		glTranslatef(-1.5f, 0.0f, -6.0f);
+		glRotatef(angle_pyramid, 1.0f, 1.0f, 0.0f);
+
+		// Draw the pyramid
+		glBegin(GL_TRIANGLES);
+		{
+			// Front
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, 1.0f, 0.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(-1.0f, -1.0f, 1.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(1.0f, -1.0f, 1.0f);
+
+			// Right
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, 1.0f, 0.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(1.0f, -1.0f, 1.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(1.0f, -1.0f, -1.0f);
+
+			// Back
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, 1.0f, 0.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(1.0f, -1.0f, -1.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(-1.0f, -1.0f, -1.0f);
+
+			// Left
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(0.0f, 1.0f, 0.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(-1.0f, -1.0f, -1.0f);
+			glColor3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(-1.0f, -1.0f, 1.0f);
+		}
+		glEnd();
+
+		//glViewport(0, 0, 800, 800);
+
 		SDL_GL_SwapWindow(window);
 	}
 
