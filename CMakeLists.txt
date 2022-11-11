@@ -2,11 +2,8 @@ cmake_minimum_required (VERSION 3.13.1)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set(LYSSA_PROJECT "lyssa")
-set(LYSSA_PROJECT_VERSION "0.0.1")
-
-project(${LYSSA_PROJECT}
-    VERSION ${LYSSA_PROJECT_VERSION}
+project(lyssa
+    VERSION "0.0.1"
     LANGUAGES CXX
 )
 
@@ -47,39 +44,45 @@ find_package(OpenGL REQUIRED)
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/imgui)
 find_package(OpenCV REQUIRED)
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 find_package(spdlog REQUIRED)
+#find_package(GLI REQUIRED)
+#set(GLI_TEST_ENABLE OFF)
+#add_subdirectory(${PROJECT_SOURCE_DIR}/lib/gli)
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/glm)
+add_subdirectory(${PROJECT_SOURCE_DIR}/lib/stb-cmake)
+find_package(GLEW REQUIRED)
+#find_package(fmt REQUIRED)
 
 # Lyssa source files
 set(LYSSA_SRC
    src/core/lyssa.h
    src/core/lyssa.cpp
+   src/core/shader.h
+   src/core/shader.cpp
 )
 
 # Lyssa executable
 add_executable(${PROJECT_NAME} ${LYSSA_SRC})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
 
-# Threads
+# Libs
 target_link_libraries(${PROJECT_NAME} Threads::Threads)
-
-# OpenGL
-target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
-target_include_directories(${PROJECT_NAME} PUBLIC ${OPENGL_INCLUDE_DIR})
-
-# imgui
+target_link_libraries(${PROJECT_NAME} OpenGL::GL)
 target_link_libraries(${PROJECT_NAME} imgui::imgui)
-
-# OpenCV
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
-
-# SDL2
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
-
-# spdlog
+target_link_libraries(${PROJECT_NAME} ${SDL2_IMAGE_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${SPDLOG_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SPDLOG_INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/lib/gli)
+target_link_libraries(${PROJECT_NAME} glm::glm)
+target_link_libraries(${PROJECT_NAME} stb_image)
+target_link_libraries(${PROJECT_NAME} GLEW::GLEW)
+#target_link_libraries(${PROJECT_NAME} fmt::fmt)
 
 # Output directories
 function_output_directory(imgui)
