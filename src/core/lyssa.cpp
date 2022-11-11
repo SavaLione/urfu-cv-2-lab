@@ -41,15 +41,41 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-	SDL_Window *window	  = SDL_CreateWindow("OpenGL Test", 0, 0, 800, 800, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	SDL_Window *window = SDL_CreateWindow("OpenGL Test", 0, 0, 800, 800, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+	if(!window)
+	{
+		spdlog::error("Error: {}", SDL_GetError());
+		return -1;
+	}
+
 	SDL_GLContext context = SDL_GL_CreateContext(window);
+
+	if(!context)
+	{
+		spdlog::error("Error: {}", SDL_GetError());
+		return -1;
+	}
+
+	// Enable glew experimental, this enables some more OpenGL extensions.
+	glewExperimental = GL_TRUE;
+	if(glewInit() != GLEW_OK)
+	{
+		spdlog::error("Failed to initialize GLEW");
+		return -1;
+	}
+
+	// Set some OpenGL settings
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
 
 	bool exit = false;
 
+	SDL_Event event;
+
 	while(!exit)
 	{
-		SDL_Event event;
-
 		while(SDL_PollEvent(&event))
 		{
 			switch(event.type)
@@ -66,10 +92,12 @@ int main(int argc, char *argv[])
 		}
 
 		glViewport(0, 0, 800, 800);
-		glClearColor(1.f, 0.f, 1.f, 0.f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearColor(1.f, 0.f, 1.f, 0.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		SDL_GL_SwapWindow(window);
 	}
+
+	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 
