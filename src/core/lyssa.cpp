@@ -41,16 +41,6 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
 
-	/* Set SDL_GL attributes. */
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
 	SDL_Window *window	  = SDL_CreateWindow("OpenGL Test", 0, 0, 800, 800, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	SDL_GLContext context = SDL_GL_CreateContext(window);
 
@@ -58,32 +48,6 @@ int main(int argc, char *argv[])
 	// SDL_GL_MakeCurrent(window, gl_context);
 
 	bool exit = false;
-
-	// GL code
-	GLuint vertex_array_id;
-	glGenVertexArrays(1, &vertex_array_id);
-	glBindVertexArray(vertex_array_id);
-
-	// Create and compile our GLSL program from the shaders
-	GLuint program_id = load_shader("simple_vertex_shader.vert", "simple_fragment_shader.frag");
-
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f,
-		-1.0f,
-		0.0f,
-		1.0f,
-		-1.0f,
-		0.0f,
-		0.0f,
-		1.0f,
-		0.0f,
-	};
-
-	GLuint vertex_buffer;
-	glGenBuffers(1, &vertex_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-	// GL code end
 
 	while(!exit)
 	{
@@ -107,26 +71,8 @@ int main(int argc, char *argv[])
 		glViewport(0, 0, 800, 800);
 		glClearColor(1.f, 0.f, 1.f, 0.f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		// GL code
-		glUseProgram(program_id);
-
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		glDisableVertexAttribArray(0);
-		// GL code end
 		SDL_GL_SwapWindow(window);
 	}
-
-	// GL code
-	glDeleteBuffers(1, &vertex_buffer);
-	glDeleteVertexArrays(1, &vertex_array_id);
-	glDeleteProgram(program_id);
-	// GL code end
-
 	// SDL_GL_DeleteContext(gl_context);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
