@@ -3,7 +3,11 @@
 #include <SDL2/SDL.h>
 #include <exception>
 #include <spdlog/spdlog.h>
+#include <stdexcept>
 #include <string>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "core/stb_image.h"
 
 std::string read_file(std::string file_name)
 {
@@ -112,4 +116,65 @@ GLuint load_shader(std::string vertex_file_path, std::string fragment_file_path)
 	glDeleteShader(fragment_shader_id);
 
 	return program_id;
+}
+
+GLuint compile_shader(unsigned int type, const std::string &source)
+{
+	unsigned int id = glCreateShader(type);
+	const char *src = source.c_str();
+	glShaderSource(id, 1, &src, nullptr);
+	glCompileShader(id);
+
+	int result;
+	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+	if(result == GL_FALSE)
+	{
+		int length;
+		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+		char *message = (char *)malloc(length);
+		glGetShaderInfoLog(id, length, &length, message);
+		throw std::runtime_error("Compile shader error");
+		glDeleteShader(id);
+		return 0;
+	}
+	return id;
+}
+
+GLuint create_program(const std::string &vertex_shader, const std::string &fragment_shader)
+{
+	unsigned int program = glCreateProgram();
+	unsigned int vs		 = compile_shader(GL_VERTEX_SHADER, vertex_shader);
+	unsigned int fs		 = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
+
+	glAttachShader(program, vs);
+	glAttachShader(program, fs);
+	glLinkProgram(program);
+	glValidateProgram(program);
+
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	return program;
+}
+
+texture::texture(const std::string path)
+{
+	stbi_set_flip_vertically_on_load(1);
+	localBuffer = stbi_load(path.c_str(), &width, &height, &BPP, 4);
+
+	glGenTextures(1, &rendererId);
+	glBindTexture(GL_TEXTURE_2D, rendererId);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if(localBuffer)
+	{
+		stbi_image_free(localBuffer);
+	}
 }

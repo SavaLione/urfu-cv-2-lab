@@ -50,7 +50,7 @@ find_package(spdlog REQUIRED)
 #set(GLI_TEST_ENABLE OFF)
 #add_subdirectory(${PROJECT_SOURCE_DIR}/lib/gli)
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/glm)
-add_subdirectory(${PROJECT_SOURCE_DIR}/lib/stb-cmake)
+# add_subdirectory(${PROJECT_SOURCE_DIR}/lib/stb-cmake)
 find_package(GLEW REQUIRED)
 #find_package(fmt REQUIRED)
 
@@ -60,6 +60,7 @@ set(LYSSA_SRC
    src/core/lyssa.cpp
    src/core/shader.h
    src/core/shader.cpp
+   src/core/stb_image.h
 )
 
 # Lyssa executable
@@ -80,7 +81,7 @@ target_link_libraries(${PROJECT_NAME} ${SPDLOG_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SPDLOG_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/lib/gli)
 target_link_libraries(${PROJECT_NAME} glm::glm)
-target_link_libraries(${PROJECT_NAME} stb_image)
+# target_link_libraries(${PROJECT_NAME} stb_image)
 target_link_libraries(${PROJECT_NAME} GLEW::GLEW)
 #target_link_libraries(${PROJECT_NAME} fmt::fmt)
 
