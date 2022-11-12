@@ -7,7 +7,7 @@
 #include <string>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "core/stb_image.h"
+#include <stb_image.h>
 
 std::string read_file(std::string file_name)
 {

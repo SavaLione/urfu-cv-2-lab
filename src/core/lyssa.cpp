@@ -259,6 +259,26 @@ int main(int argc, char *argv[])
 		h,
 		1.0,
 		1.0};
+
+	// float texture_position_1[] = {
+	// 	-w,
+	// 	-h,
+	// 	0.0,
+	// 	0.0,
+	// 	-w,
+	// 	h,
+	// 	0.0,
+	// 	1.0,
+	// 	w,
+	// 	-h,
+	// 	1.0,
+	// 	0.0,
+	// 	//
+	// 	w,
+	// 	h,
+	// 	1.0,
+	// 	1.0};
+
 	GLuint indices[] {0, 1, 2, 1, 2, 3};
 
 	GLuint vao;
