@@ -192,7 +192,7 @@ int main()
 			// cv::FarnebackOpticalFlow(old_gray, frame_gray, flow, status, err, cv::Size(15, 15), 2, criteria);
 			cv::calcOpticalFlowFarneback(old_gray, frame_gray, flow, 0.5, 5, 5, 3, 7, 1.5, cv::OPTFLOW_FARNEBACK_GAUSSIAN);
 
-			int step = 20;
+			int step = 1;
 
 			// for(std::size_t y = 0; y < flow.rows; y++)
 			for(std::size_t y = 0; y < flow.rows; y += step)
@@ -239,16 +239,18 @@ int main()
 					v_x = std::max(v_x, 0);
 					v_y = std::max(v_y, 0);
 
-					// cv::line(
-					// 	frame,
-					// 	{(int)x, (int)y},
-					// 	cv::Vec2i(x + flow.at<cv::Vec2f>(x, y)[0], y + flow.at<cv::Vec2f>(x, y)[0]),
-					// 	cv::Scalar(255, 255, 255));
-					cv::line(
-						frame,
-						{(int)x, (int)y},
-						cv::Vec2i(v_x, v_y),
-						cv::Scalar(255, 255, 255));
+					//cv::line(frame, {(int)x, (int)y}, cv::Vec2i(v_x, v_y), cv::Scalar(255, 255, 255));
+
+					for(std::size_t i = 0; i < objects.size(); i++)
+					{
+						if((objects[i].x - v_x > 5) && (objects[i].y - v_y > 5))
+						if((objects[i].x == x) && (objects[i].y == y))
+						{
+							// spdlog::info("Moved - x: {} y: {} - x: {} y: {}", objects[i].x, objects[i].y, v_x, v_y);
+							objects[i].x = v_x;
+							objects[i].y = v_y;
+						}
+					}
 				}
 			}
 
@@ -296,13 +298,13 @@ int main()
 			// 	}
 			// }
 
-			// // Objects
-			// for(std::size_t i = 0; i < objects.size(); i++)
-			// {
-			// 	//Color of the circle
-			// 	cv::Scalar line_color(255, 255, 255);
-			// 	cv::circle(frame, {objects[i].x, objects[i].y}, circle_radius, line_color, 4, 8);
-			// }
+			// Objects
+			for(std::size_t i = 0; i < objects.size(); i++)
+			{
+				//Color of the circle
+				cv::Scalar line_color(255, 255, 255);
+				cv::circle(frame, {objects[i].x, objects[i].y}, circle_radius, line_color, 4, 8);
+			}
 
 			/* We are showing the result */
 			cv::imshow("Window 1", frame);
