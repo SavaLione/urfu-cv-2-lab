@@ -8,8 +8,10 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
+#include <random>
 #include <spdlog/spdlog.h>
 #include <vector>
+
 
 bool BOOL_EXIT = false;
 
@@ -99,9 +101,25 @@ int main()
 
 	std::vector<point> objects;
 
-	objects.push_back({120, 120});
-	objects.push_back({20, 98});
-	objects.push_back({300, 300});
+	// Set seed
+	std::mt19937::result_type const seed_value = 1234;
+
+	std::mt19937 my_rng;
+	my_rng.seed(seed_value);
+
+	std::uniform_int_distribution<std::mt19937::result_type> dist_x(0, window_size.x);
+	std::uniform_int_distribution<std::mt19937::result_type> dist_y(0, window_size.y);
+
+	// objects.push_back({120, 120});
+	// objects.push_back({20, 98});
+	// objects.push_back({300, 300});
+	for(std::size_t i = 0; i < 12; i++)
+	{
+		point random_circle;
+		random_circle.x = dist_x(my_rng);
+		random_circle.y = dist_y(my_rng);
+		objects.push_back(random_circle);
+	}
 
 	int time = 0;
 
@@ -192,7 +210,12 @@ int main()
 					point x2 = {(int)good_new[z].x, (int)good_new[z].y};
 					if(is_in_circle(objects[i], x2, circle_radius))
 					{
-						spdlog::info("Is in circle");
+						spdlog::info("point x: {} y: {} - is in circle", objects[i].x, objects[i].y);
+						while(is_in_circle(objects[i], x2, circle_radius))
+						{
+							objects[i].x++;
+							objects[i].y++;
+						}
 					}
 				}
 			}
