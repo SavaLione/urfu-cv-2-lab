@@ -1,5 +1,6 @@
 #include "optical_flow.h"
 
+#include <exception>
 #include <opencv2/core.hpp>
 #include <opencv2/core/types.hpp>
 #include <opencv2/highgui.hpp>
@@ -59,7 +60,7 @@ int main()
 			}
 			catch(...)
 			{
-                spdlog::info("Processing");
+				spdlog::info("Processing");
 			}
 		}
 	}
@@ -80,9 +81,17 @@ int main()
 		// 	BOOL_EXIT = true;
 		// }
 
-		video_capture_device >> frame;
-		if(frame.empty())
+		try
 		{
+			video_capture_device >> frame;
+			if(frame.empty())
+			{
+				continue;
+			}
+		}
+		catch(std::exception &e)
+		{
+			spdlog::error("Error: {}", e.what());
 			continue;
 		}
 
@@ -105,6 +114,8 @@ int main()
 				line(mask, p1[i], p0[i], colors[i], 2);
 				circle(frame, p1[i], 5, colors[i], -1);
 			}
+			else
+				continue;
 		}
 
 		cv::Mat img;
